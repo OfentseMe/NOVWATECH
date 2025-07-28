@@ -3,1092 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovWaTech - Smart Pipe Monitoring System</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        
-        :root {
-            --primary: #0066ff;
-            --secondary: #00d4ff;
-            --accent: #ff0080;
-            --dark: #0a0a0a;
-            --darker: #050505;
-            --light: #ffffff;
-            --gray: #8b8b8b;
-            --gray-light: #f5f5f5;
-            --glow: 0 0 20px rgba(0, 102, 255, 0.3);
-            --glow-accent: 0 0 30px rgba(255, 0, 128, 0.4);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--darker);
-            color: var(--light);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* Animated Background */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at 20% 80%, rgba(0, 102, 255, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(255, 0, 128, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 40%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
-            animation: bgShift 20s ease-in-out infinite;
-        }
-
-        @keyframes bgShift {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.1) rotate(1deg); }
-        }
-
-        /* Floating particles */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: var(--secondary);
-            border-radius: 50%;
-            animation: float 15s infinite linear;
-            opacity: 0.3;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(100vh) translateX(-50px); opacity: 0; }
-            10% { opacity: 0.3; }
-            90% { opacity: 0.3; }
-            100% { transform: translateY(-100px) translateX(50px); opacity: 0; }
-        }
-
-        /* Header */
-        .header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 1rem 0;
-            backdrop-filter: blur(20px);
-            background: rgba(10, 10, 10, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .header.scrolled {
-            background: rgba(5, 5, 5, 0.95);
-            backdrop-filter: blur(30px);
-        }
-
-        .nav {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.02em;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 3rem;
-        }
-
-        .nav-links a {
-            color: var(--light);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-            padding: 0.5rem 0;
-        }
-
-        .nav-links a::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover::before {
-            width: 100%;
-        }
-
-        .nav-links a:hover {
-            color: var(--secondary);
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            z-index: 10;
-        }
-
-        .hero-title {
-            font-size: clamp(4rem, 8vw, 12rem);
-            font-weight: 900;
-            margin-bottom: 2rem;
-            background: linear-gradient(45deg, var(--light), var(--secondary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.03em;
-            line-height: 0.9;
-            animation: titleGlow 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes titleGlow {
-            0% { filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3)); }
-            100% { filter: drop-shadow(0 0 30px rgba(255, 0, 128, 0.5)); }
-        }
-
-        .hero-subtitle {
-            font-size: 1.5rem;
-            color: var(--gray);
-            margin-bottom: 3rem;
-            font-weight: 400;
-            letter-spacing: 0.02em;
-        }
-
-        .vision-box {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 3rem;
-            margin: 3rem auto;
-            max-width: 800px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .vision-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .vision-box:hover::before {
-            left: 100%;
-        }
-
-        .vision-box:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--glow);
-        }
-
-        .vision-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--secondary);
-        }
-
-        .vision-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 3rem;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: var(--light);
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--glow);
-        }
-
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, var(--accent), var(--secondary));
-            transition: left 0.3s ease;
-            z-index: -1;
-        }
-
-        .cta-button:hover::before {
-            left: 0;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--glow-accent);
-        }
-
-        /* Main Content */
-        .main {
-            position: relative;
-            z-index: 10;
-        }
-
-        .section {
-            padding: 8rem 0;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding-left: 2rem;
-            padding-right: 2rem;
-        }
-
-        .section-title {
-            font-size: clamp(3rem, 5vw, 5rem);
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 6rem;
-            background: linear-gradient(45deg, var(--light), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.02em;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
-            border-radius: 2px;
-        }
-
-        /* Features Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-top: 4rem;
-        }
-
-        .feature-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 3rem;
-            text-align: center;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .feature-card:hover::before {
-            opacity: 1;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), var(--glow);
-            border-color: rgba(0, 212, 255, 0.3);
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 2rem;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: var(--glow);
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--light);
-        }
-
-        .feature-card p {
-            margin-bottom: 1rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 500;
-        }
-
-        .feature-card p strong {
-            color: var(--secondary);
-        }
-
-        /* Roadmap Section */
-        .roadmap {
-            background: rgba(0, 0, 0, 0.5);
-            position: relative;
-        }
-
-        .roadmap::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(0, 102, 255, 0.05), rgba(255, 0, 128, 0.05));
-        }
-
-        .roadmap-timeline {
-            position: relative;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .roadmap-timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(to bottom, var(--primary), var(--secondary), var(--accent));
-            transform: translateX(-50%);
-            border-radius: 2px;
-            box-shadow: var(--glow);
-        }
-
-        .roadmap-item {
-            display: flex;
-            align-items: center;
-            margin: 4rem 0;
-            position: relative;
-        }
-
-        .roadmap-item:nth-child(even) {
-            flex-direction: row-reverse;
-        }
-
-        .roadmap-content {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 2.5rem;
-            width: 45%;
-            margin: 0 2.5%;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .roadmap-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .roadmap-content:hover::before {
-            left: 100%;
-        }
-
-        .roadmap-content:hover {
-            transform: scale(1.05);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: var(--glow);
-            border-color: rgba(0, 212, 255, 0.3);
-        }
-
-        .roadmap-content h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--secondary);
-        }
-
-        .roadmap-content p {
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.6;
-        }
-
-        .roadmap-number {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 1.2rem;
-            color: var(--light);
-            z-index: 10;
-            box-shadow: var(--glow);
-            transition: all 0.3s ease;
-        }
-
-        .roadmap-number:hover {
-            transform: translateX(-50%) scale(1.2);
-        }
-
-        /* Stats Section */
-        .stats {
-            background: rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-top: 4rem;
-        }
-
-        .stat-item {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .stat-item:hover::before {
-            opacity: 1;
-        }
-
-        .stat-item:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: var(--glow);
-        }
-
-        .stat-number {
-            font-size: 4rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--secondary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: block;
-            margin-bottom: 1rem;
-        }
-
-        .stat-label {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--darker);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 4rem 0 2rem;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-
-        .footer-section h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--secondary);
-        }
-
-        .footer-section p {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 0.8rem;
-            font-weight: 400;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--gray);
-        }
-
-        /* Mobile Menu */
-        .mobile-menu {
-            display: none;
-            cursor: pointer;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .mobile-menu span {
-            width: 25px;
-            height: 2px;
-            background: var(--light);
-            transition: all 0.3s ease;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .mobile-menu {
-                display: flex;
-            }
-
-            .hero-title {
-                font-size: clamp(3rem, 12vw, 6rem);
-            }
-
-            .hero-subtitle {
-                font-size: 1.2rem;
-            }
-
-            .vision-box {
-                padding: 2rem;
-                margin: 2rem auto;
-            }
-
-            .section {
-                padding: 4rem 0;
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .feature-card {
-                padding: 2rem;
-            }
-
-            .roadmap-timeline::before {
-                left: 30px;
-            }
-
-            .roadmap-item {
-                flex-direction: column !important;
-                align-items: flex-start;
-                margin-left: 60px;
-            }
-
-            .roadmap-content {
-                width: 100%;
-                margin: 0;
-            }
-
-            .roadmap-number {
-                left: 30px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
-            }
-
-            .stat-item {
-                padding: 2rem 1rem;
-            }
-
-            .stat-number {
-                font-size: 3rem;
-            }
-        }
-
-        /* Scroll animations */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--darker);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, var(--primary), var(--secondary));
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(to bottom, var(--secondary), var(--accent));
-        }
-    </style>
+    <title>NovWaTech - Intelligent Water Infrastructure Monitoring</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="bg-animation"></div>
-    <div class="particles" id="particles"></div>
-
-    <header class="header" id="header">
-        <nav class="nav">
-            <div class="logo">NovWaTech</div>
-            <ul class="nav-links">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-water"></i>
+                <span>NovWaTech</span>
+            </div>
+            <ul class="nav-menu">
                 <li><a href="#home">Home</a></li>
-                <li><a href="#features">Technology</a></li>
-                <li><a href="#roadmap">Roadmap</a></li>
-                <li><a href="#stats">Impact</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#features">Benefits</a></li>
+                <li><a href="#product">Product</a></li>
+                <li><a href="#benefits">Value</a></li>
+                <li><a href="#contact">Get In Touch</a></li>
             </ul>
-            <div class="mobile-menu">
+            <div class="hamburger">
                 <span></span>
                 <span></span>
                 <span></span>
-            </div>
-        </nav>
-    </header>
-
-    <main>
-        <section class="hero" id="home">
-            <div class="hero-content">
-                <h1 class="hero-title">NovWaTech</h1>
-                <p class="hero-subtitle">Intelligent Water Infrastructure Monitoring & Burst Prevention</p>
-                
-                <div class="vision-box fade-in">
-                    <h3 class="vision-title">Our Vision</h3>
-                    <p class="vision-text">
-                        We aim to revolutionize water infrastructure management through an intelligent, AI-driven platform that prevents costly water pipe bursts by predicting risks, simulating failures, and automating responses.
-                    </p>
-                </div>
-                
-                <a href="#features" class="cta-button">Explore Technology</a>
-            </div>
-        </section>
-
-        <section class="section" id="features">
-            <h2 class="section-title fade-in">Key Components</h2>
-            <div class="features-grid">
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">📡</div>
-                    <h3>Real-Time Data Collection</h3>
-                    <p><strong>Smart Sensors:</strong> Pressure, flow, and temperature monitoring</p>
-                    <p><strong>IoT Platform:</strong> MQTT protocol for reliable data streaming</p>
-                    <p><strong>Storage:</strong> InfluxDB for time-series data analysis</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">🤖</div>
-                    <h3>Machine Learning Pipeline</h3>
-                    <p><strong>ML Models:</strong> Trained ML models (e.g, Artificial Neural Networks)</p>
-                    <p><strong>Data Pipeline:</strong> Apache Kafka for real-time ingestion</p>
-                    <p><strong>Processing:</strong> Advanced predictive analytics</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">⚙️</div>
-                    <h3>Simulation Engine</h3>
-                    <p><strong>Hydraulic Modeling:</strong> EPANET and WNTR integration</p>
-                    <p><strong>Risk Assessment:</strong> Historical and real-time data analysis</p>
-                    <p><strong>Failure Prediction:</strong> Advanced simulation capabilities</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">🚨</div>
-                    <h3>Monitoring & Alerts</h3>
-                    <p><strong>Real-Time Notifications:</strong> Email and WhatsApp via Twilio</p>
-                    <p><strong>Visualization:</strong> PowerBI and Grafana dashboards</p>
-                    <p><strong>Response:</strong> Automated alert systems</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">📊</div>
-                    <h3>Data Infrastructure</h3>
-                    <p><strong>Streaming:</strong> MQTT protocols for sensor data</p>
-                    <p><strong>Storage:</strong> InfluxDB for time-series optimization</p>
-                    <p><strong>Processing:</strong> Real-time analytics pipeline</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">🔧</div>
-                    <h3>API & Integration</h3>
-                    <p><strong>Scoring Engine:</strong> FastAPI for real-time risk assessment</p>
-                    <p><strong>Multi-channel:</strong> Comprehensive notification system</p>
-                    <p><strong>Dashboard:</strong> Stakeholder visualization platform</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section roadmap" id="roadmap">
-            <h2 class="section-title fade-in">Implementation Roadmap</h2>
-            <div class="roadmap-timeline">
-                <div class="roadmap-item fade-in">
-                    <div class="roadmap-content">
-                        <h3>Sensor Deployment</h3>
-                        <p>Utilizes existing IoT sensors across critical pipe networks for comprehensive monitoring of pressure, flow, and temperature parameters.</p>
-                    </div>
-                    <div class="roadmap-number">1</div>
-                </div>
-
-                <div class="roadmap-item fade-in">
-                    <div class="roadmap-content">
-                        <h3>Data Infrastructure</h3>
-                        <p>Establish MQTT streaming protocols and implement InfluxDB storage systems for optimized time-series data management.</p>
-                    </div>
-                    <div class="roadmap-number">2</div>
-                </div>
-
-                <div class="roadmap-item fade-in">
-                    <div class="roadmap-content">
-                        <h3>Model Development</h3>
-                        <p>Trains and validates machine learning models using historical burst data with ANN</p>
-                    </div>
-                    <div class="roadmap-number">3</div>
-                </div>
-
-                <div class="roadmap-item fade-in">
-                    <div class="roadmap-content">
-                        <h3>Integration & Simulation</h3>
-                        <p>Deploy FastAPI scoring engine for real-time risk assessment</p>
-                    </div>
-                    <div class="roadmap-number">4</div>
-                </div>
-
-                <div class="roadmap-item fade-in">
-                    <div class="roadmap-content">
-                        <h3>Alert System</h3>
-                        <p>Multi-channel notification system with Twilio integration for immediate email and WhatsApp response capabilities.</p>
-                    </div>
-                    <div class="roadmap-number">5</div>
-                </div>
-
-                <div class="roadmap-item fade-in">
-                    <div class="roadmap-content">
-                        <h3>Dashboard Launch</h3>
-                        <p>PowerBI and Grafana visualization for stakeholder access and data analysis.</p>
-                    </div>
-                    <div class="roadmap-number">6</div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section stats" id="stats">
-            <h2 class="section-title fade-in">Expected Impact</h2>
-            <div class="stats-grid">
-                <div class="stat-item fade-in">
-                    <span class="stat-number">95%</span>
-                    <div class="stat-label">Burst Prevention Accuracy</div>
-                </div>
-                <div class="stat-item fade-in">
-                    <span class="stat-number">24/7</span>
-                    <div class="stat-label">Continuous Monitoring</div>
-                </div>
-                <div class="stat-item fade-in">
-                    <span class="stat-number">60%</span>
-                    <div class="stat-label">Cost Reduction</div>
-                </div>
-                <div class="stat-item fade-in">
-                    <span class="stat-number">5min</span>
-                    <div class="stat-label">Response Time</div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="footer" id="contact">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>NovWaTech</h3>
-                <p>Intelligent Water Infrastructure Monitoring</p>
-                <p>Preventing pipe bursts through AI-driven predictions</p>
-            </div>
-            <div class="footer-section">
-                <h3>Technology</h3>
-                <p>IoT Sensors & MQTT Streaming</p>
-                <p>Machine Learning & AI Analytics</p>
-                <p>Real-time Monitoring & Alerts</p>
-            </div>
-            <div class="footer-section">
-                <h3>Contact</h3>
-                <p>Email: info@novwatech.com</p>
-                <p>Phone: (+27) 66 288 2929</p>
-                <p>Address: 123 Tech Street, Cape Town</p>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 NovWaTech. All rights reserved.</p>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Intelligent Water Infrastructure <span class="gradient-text">Monitoring</span></h1>
+                <p class="hero-subtitle">We aim to revolutionize water infrastructure management through an intelligent, AI-driven platform that prevents costly water pipe bursts by predicting risks, simulating failures, and automating responses.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="scrollToSection('contact')">Request Demo</button>
+                    <button class="btn-secondary" onclick="scrollToSection('benefits')">See Value</button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="water-animation">
+                    <div class="water-waves"></div>
+                    <div class="pipe-system">
+                        <div class="pipe horizontal-main"></div>
+                        <div class="pipe vertical-1"></div>
+                        <div class="pipe vertical-2"></div>
+                        <div class="pipe horizontal-1"></div>
+                        <div class="pipe horizontal-2"></div>
+                        <div class="junction" id="junction1"></div>
+                        <div class="junction" id="junction2"></div>
+                        <div class="junction" id="junction3"></div>
+                        <div class="junction" id="junction4"></div>
+                        <div class="sensor" id="sensor1"><div class="sensor-pulse"></div></div>
+                        <div class="sensor" id="sensor2"><div class="sensor-pulse"></div></div>
+                        <div class="sensor" id="sensor3"><div class="sensor-pulse"></div></div>
+                        <div class="sensor" id="sensor4"><div class="sensor-pulse"></div></div>
+                        <div class="water-flow" id="flow1"></div>
+                        <div class="water-flow" id="flow2"></div>
+                        <div class="water-flow" id="flow3"></div>
+                        <div class="leak-prevention" id="prevention1"></div>
+                        <div class="data-pulse"></div>
+                        <div class="data-pulse second-pulse"></div>
+                        <div class="alert-indicator">Pressure Anomaly Detected</div>
+                        <div class="anomaly-detection">
+                            <div class="map-view">
+                                <div class="pipe-network-map">
+                                    <div class="map-pipe horizontal-map"></div>
+                                    <div class="map-pipe vertical-map"></div>
+                                    <div class="breakage-point">
+                                        <div class="water-leak"></div>
+                                    </div>
+                                </div>
+                                <div class="map-pin"></div>
+                                <div class="map-ripple"></div>
+                            </div>
+                            <div class="notification-panel">
+                                <div class="notification sms">
+                                    <i class="fas fa-sms"></i>
+                                    <span>SMS Alert Sent</span>
+                                </div>
+                                <div class="notification whatsapp">
+                                    <i class="fab fa-whatsapp"></i>
+                                    <span>WhatsApp Alert</span>
+                                </div>
+                                <div class="notification dashboard">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <span>Dashboard Updated</span>
+                                </div>
+                            </div>
+                            <div class="ai-analysis">
+                                <div class="ai-badge">AI Analysis</div>
+                                <div class="flow-analysis">
+                                    <div class="flow-chart">
+                                        <div class="flow-line normal"></div>
+                                        <div class="flow-line anomaly"></div>
+                                        <div class="flow-indicator"></div>
+                                        <div class="detection-point"></div>
+                                    </div>
+                                    <div class="flow-label">Irregular Flow Rate Detected</div>
+                                </div>
+                                <div class="prediction-meter">
+                                    <div class="prediction-bar"></div>
+                                    <div class="prediction-label">Burst Risk: 68%</div>
+                                </div>
+                                <div class="ai-intervention">
+                                    <div class="intervention-step">1. Anomaly Detected</div>
+                                    <div class="intervention-step">2. Risk Assessment</div>
+                                    <div class="intervention-step active">3. Maintenance Alert</div>
+                                </div>
+                                <div class="action-required">Maintenance Required</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose NovWaTech?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Prevent Costly Damages</h3>
+                    <p>Avoid expensive pipe burst repairs and water damage claims with early warning alerts</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Instant Notifications</h3>
+                    <p>Get immediate alerts on your phone when potential issues are detected in your water system</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Easy Monitoring</h3>
+                    <p>View your water system health through our simple, user-friendly dashboard</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Showcase -->
+    <section id="product" class="product-showcase">
+        <div class="container">
+            <h2 class="section-title">Our Smart Water Solutions</h2>
+            <div class="product-grid">
+                <div class="product-item">
+                    <img src="images/Offering.jpg" alt="NovWaTech Solution">
+                    <div class="product-content">
+                        <h3>Complete Water Monitoring Solution</h3>
+                        <p>Everything you need to protect your water infrastructure in one comprehensive package</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/LeakLocalization.jpg" alt="Leak Detection">
+                    <div class="product-content">
+                        <h3>Precise Leak Detection</h3>
+                        <p>Pinpoint exactly where leaks occur to minimize repair time and costs</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/RateOverTime.jpg" alt="Performance Tracking">
+                    <div class="product-content">
+                        <h3>Performance Tracking</h3>
+                        <p>Monitor your water system's health and efficiency over time</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/Offering2.jpg" alt="Advanced Features">
+                    <div class="product-content">
+                        <h3>Advanced Analytics</h3>
+                        <p>Get insights that help you make informed decisions about your water infrastructure</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/ToDo.jpg" alt="Task Management">
+                    <div class="product-content">
+                        <h3>Smart Task Management</h3>
+                        <p>Automated maintenance scheduling and priority alerts keep your system running smoothly</p>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="images/Dashboard.jpg" alt="Real-time Dashboard">
+                    <div class="product-content">
+                        <h3>Real-time Dashboard</h3>
+                        <p>Monitor all your water systems from one central, easy-to-use control panel</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="benefits">
+        <div class="container">
+            <h2 class="section-title">The Value We Deliver</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-number">R50,000+</div>
+                    <h3>Average Savings</h3>
+                    <p>Prevent costly pipe burst repairs and water damage claims</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-number">24/7</div>
+                    <h3>Continuous Monitoring</h3>
+                    <p>Never worry about undetected leaks or system failures again</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-number">95%</div>
+                    <h3>Accuracy Rate</h3>
+                    <p>Reliable predictions you can trust to protect your property</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Get In Touch Today</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Ready to Protect Your Infrastructure?</h3>
+                    <p>Every day without monitoring is a risk. Start using NovWaTech's intelligent platform to protect your water infrastructure immediately.</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>info@novwatech.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+27 (0)21 123-4567</span>
+                        </div>
+
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <input type="tel" placeholder="Phone Number" required>
+
+                    <textarea placeholder="How can we help you?"></textarea>
+                    <button type="submit" class="btn-primary">Get In Touch</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-water"></i>
+                    <span>NovWaTech</span>
+                </div>
+                <p>&copy; 2025 NovWaTech. Intelligent Water Infrastructure Monitoring & Burst Prevention.</p>
+            </div>
         </div>
     </footer>
 
-    <script>
-        // Create floating particles
-        function createParticles() {
-            const particles = document.getElementById('particles');
-            const particleCount = 50;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 15 + 's';
-                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                particles.appendChild(particle);
-            }
-        }
-
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Header scroll effect
-        window.addEventListener('scroll', function() {
-            const header = document.getElementById('header');
-            if (window.scrollY > 100) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        // Observe all fade-in elements
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Stats animation
-        const statsObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const statNumbers = entry.target.querySelectorAll('.stat-number');
-                    statNumbers.forEach((stat, index) => {
-                        setTimeout(() => {
-                            stat.style.transform = 'scale(1.1)';
-                            stat.style.transition = 'transform 0.6s ease';
-                            setTimeout(() => {
-                                stat.style.transform = 'scale(1)';
-                            }, 300);
-                        }, index * 100);
-                    });
-                }
-            });
-        }, { threshold: 0.5 });
-
-        const statsSection = document.querySelector('.stats');
-        if (statsSection) {
-            statsObserver.observe(statsSection);
-        }
-
-        // Roadmap number hover effects
-        document.querySelectorAll('.roadmap-number').forEach(number => {
-            number.addEventListener('mouseenter', function() {
-                this.style.background = 'linear-gradient(45deg, var(--secondary), var(--accent))';
-            });
-            
-            number.addEventListener('mouseleave', function() {
-                this.style.background = 'linear-gradient(45deg, var(--primary), var(--accent))';
-            });
-        });
-
-        // Enhanced feature card interactions
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-10px) scale(1.02)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
-        });
-
-        // Parallax effect for hero section
-        window.addEventListener('scroll', function() {
-            const scrolled = window.pageYOffset;
-            const heroContent = document.querySelector('.hero-content');
-            if (heroContent) {
-                heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
-            }
-        });
-
-        // Dynamic gradient animation
-        let gradientAngle = 0;
-        setInterval(() => {
-            gradientAngle += 0.5;
-            document.documentElement.style.setProperty('--gradient-angle', gradientAngle + 'deg');
-        }, 50);
-
-        // Initialize particles
-        createParticles();
-
-        // Add loading animation
-        window.addEventListener('load', function() {
-            document.body.style.opacity = '0';
-            setTimeout(() => {
-                document.body.style.transition = 'opacity 1s ease';
-                document.body.style.opacity = '1';
-            }, 100);
-        });
-
-        // Enhanced CTA button interaction
-        const ctaButton = document.querySelector('.cta-button');
-        if (ctaButton) {
-            ctaButton.addEventListener('click', function(e) {
-                // Create ripple effect
-                const ripple = document.createElement('span');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-                
-                ripple.style.position = 'absolute';
-                ripple.style.width = size + 'px';
-                ripple.style.height = size + 'px';
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
-                ripple.style.background = 'rgba(255, 255, 255, 0.3)';
-                ripple.style.borderRadius = '50%';
-                ripple.style.transform = 'scale(0)';
-                ripple.style.animation = 'ripple 0.6s ease-out';
-                ripple.style.pointerEvents = 'none';
-                
-                this.appendChild(ripple);
-                
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            });
-        }
-
-        // Add ripple animation keyframes
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(2);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
